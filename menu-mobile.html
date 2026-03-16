@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>L'Orfèvre — La Carte</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8d08a;
+    --gold-dim: #c9a84c55;
+    --black: #080806;
+    --surface: #0f0f0a;
+    --card: #141410;
+    --card-border: #c9a84c22;
+    --text-primary: #f0e6cc;
+    --text-secondary: #a89060;
+    --text-dim: #5c4e34;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--black);
+    color: var(--text-primary);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  /* PHONE WRAPPER */
+  .phone-shell {
+    max-width: 390px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--black);
+    padding: 52px 24px 0;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 0;
+  }
+
+  .header-ornament {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    opacity: 0.55;
+    margin-bottom: 10px;
+    font-family: 'Cinzel', serif;
+  }
+
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .header-sub {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 18px;
+    font-family: 'Cinzel', serif;
+  }
+
+  .header-divider {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 0 auto 18px;
+  }
+
+  .header-desc {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 300px;
+    margin: 0 auto 20px;
+    opacity: 0.8;
+  }
+
+  /* TABS */
+  .tabs-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--black);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 8px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.25s, border-color 0.25s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    text-transform: uppercase;
+  }
+
+  .tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* SECTIONS */
+  .section { display: block; padding: 0 16px 100px; max-height: 0; overflow: hidden; opacity: 0; }
+  .section.active { max-height: 99999px; overflow: visible; opacity: 1; }
+
+
+
+  .section-title-block {
+    text-align: center;
+    padding: 28px 0 20px;
+  }
+
+  .section-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    opacity: 0.5;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .section-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .section-line {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 12px auto 0;
+  }
+
+  /* DISH CARD */
+  .dish-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    margin-bottom: 12px;
+    padding: 20px 20px 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .dish-card:active { border-color: var(--gold-dim); }
+
+  .dish-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .dish-card:active::before { opacity: 0.5; }
+
+  .dish-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+
+  .dish-name {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    flex: 1;
+  }
+
+  .dish-price {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--gold);
+    white-space: nowrap;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .dish-desc {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .dish-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .dish-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    padding: 3px 8px;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  .tag.signature { border-color: #c9a84c88; opacity: 1; }
+  .tag.prestige  { border-color: #e8d08a66; color: var(--gold-light); opacity: 1; }
+  .tag.veggie    { border-color: #5a8a5a66; color: #8ab88a; opacity: 1; }
+
+  .allergens {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .allergen {
+    font-size: 11px;
+    opacity: 0.45;
+  }
+
+  /* VIN CARDS */
+  .vin-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    opacity: 0.55;
+    text-transform: uppercase;
+    padding: 20px 4px 10px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 12px;
+  }
+
+  .vin-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .vin-appellation {
+    font-family: 'Cinzel', serif;
+    font-size: 8.5px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    opacity: 0.5;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .vin-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .vin-domaine {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+
+  .vin-notes {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  .vin-price {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .vin-price-item {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .vin-price-dot {
+    width: 3px;
+    height: 3px;
+    background: var(--gold);
+    opacity: 0.3;
+    border-radius: 50%;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 390px;
+    background: var(--black);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 20px;
+    z-index: 200;
+  }
+
+  .bottom-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .bottom-item .icon { font-size: 18px; }
+  .bottom-item.active { color: var(--gold); }
+
+  /* SCROLL TO TOP */
+  .back-top {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .back-top button {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    padding: 8px 16px;
+  }
+
+  /* CAVE INFO */
+  .cave-intro {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    text-align: center;
+    padding: 0 8px 24px;
+    opacity: 0.8;
+  }
+
+  /* ALLERGEN LEGEND */
+  .legend {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 16px 18px;
+    margin: 24px 0 0;
+  }
+  .legend-title {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    opacity: 0.5;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+  .legend-note {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--text-dim);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-ornament">✦ &nbsp; Saison 2026 &nbsp; ✦</div>
+    <div class="header-title">L'ORFÈVRE</div>
+    <div class="header-sub">Gastronomie Française · Paris</div>
+    <div class="header-divider"></div>
+    <div class="header-desc">Une cuisine de saison, ancrée dans le terroir français, sublimée par la précision du geste.</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab active" onclick="showSection('entrees', this)">Entrées</button>
+      <button class="tab" onclick="showSection('plats', this)">Plats</button>
+      <button class="tab" onclick="showSection('desserts', this)">Desserts</button>
+      <button class="tab" onclick="showSection('vins', this)">Carte des Vins</button>
+    </div>
+  </div>
+
+  <!-- ============ ENTRÉES ============ -->
+  <div class="section active" id="entrees">
+    <div class="section-title-block">
+      <div class="section-eyebrow">Pour commencer</div>
+      <div class="section-heading">Entrées</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Foie Gras de Canard</div>
+        <div class="dish-price">38€</div>
+      </div>
+      <div class="dish-desc">Terrine maison, chutney de figues et vieux porto, brioche toastée au beurre salé de Guérande.</div>
+      <div class="dish-footer">
+        <div class="dish-tags">
+          <span class="tag signature">Signature</span>
+          <span class="tag">Maison</span>
+        </div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Noix de Saint-Jacques</div>
+        <div class="dish-price">42€</div>
+      </div>
+      <div class="dish-desc">Snackées à la plancha, velouté de butternut, huile de truffe noire du Périgord, tuile parmesan.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Saison</span></div>
+        <div class="allergens"><span class="allergen">🦪</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Tartare de Veau</div>
+        <div class="dish-price">34€</div>
+      </div>
+      <div class="dish-desc">Veau de lait haché au couteau, câpres, cornichons, jaune d'œuf confit, chips de sarrasin.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Tradition</span></div>
+        <div class="allergens"><span class="allergen">🌾</span><span class="allergen">🟡</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Velouté de Champignons</div>
+        <div class="dish-price">26€</div>
+      </div>
+      <div class="dish-desc">Cèpes, girolles et chanterelles des sous-bois, crème fouettée à la truffe, croûtons au romarin.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag veggie">Végétarien</span></div>
+        <div class="allergens"><span class="allergen">🌾</span><span class="allergen">🌿</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Huîtres de Marennes</div>
+        <div class="dish-price">28€</div>
+      </div>
+      <div class="dish-desc">6 huîtres n°2, mignonette de poivre, citron caviar, pain de seigle grillé au beurre d'algues.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Pêche fraîche</span></div>
+        <div class="allergens"><span class="allergen">🦪</span><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Carpaccio de Langoustines</div>
+        <div class="dish-price">46€</div>
+      </div>
+      <div class="dish-desc">Langoustines bretonnes, vinaigrette d'agrumes, caviar Osciètre, herbes fraîches du jardin.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag prestige">Prestige</span></div>
+        <div class="allergens"><span class="allergen">🦐</span><span class="allergen">🌱</span></div>
+      </div>
+    </div>
+
+
+  <!-- ============ PLATS ============ -->
+  <div class="section" id="plats">
+    <div class="section-title-block">
+      <div class="section-eyebrow">La pièce maîtresse</div>
+      <div class="section-heading">Plats</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Filet de Bœuf Rossini</div>
+        <div class="dish-price">68€</div>
+      </div>
+      <div class="dish-desc">Filet de bœuf charolais, escalope de foie gras poêlée, sauce Périgueux à la truffe noire, pomme dauphine.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag signature">Signature</span></div>
+        <div class="allergens"><span class="allergen">🌾</span><span class="allergen">🌿</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Homard Bleu Breton</div>
+        <div class="dish-price">72€</div>
+      </div>
+      <div class="dish-desc">Rôti entier, bisque corsée au cognac, légumes croquants du moment, beurre blanc aux agrumes.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag prestige">Prestige</span><span class="tag">Pêche du jour</span></div>
+        <div class="allergens"><span class="allergen">🦐</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Pigeon de Bresse Rôti</div>
+        <div class="dish-price">58€</div>
+      </div>
+      <div class="dish-desc">Rôti en cocotte, jus corsé aux baies de genièvre, gratin de pommes de terre à la truffe.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Terroir</span></div>
+        <div class="allergens"><span class="allergen">🌿</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Sole de Ligne Meunière</div>
+        <div class="dish-price">56€</div>
+      </div>
+      <div class="dish-desc">Sole entière levée en salle, beurre noisette aux câpres et citron, pommes vapeur persillées.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Classique</span></div>
+        <div class="allergens"><span class="allergen">🐟</span><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Ris de Veau Doré</div>
+        <div class="dish-price">62€</div>
+      </div>
+      <div class="dish-desc">Ris de veau croustillant, morilles à la crème, asperges vertes, jus de veau réduit au Madère.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Saison</span></div>
+        <div class="allergens"><span class="allergen">🌾</span><span class="allergen">🌿</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Risotto Truffe Noire</div>
+        <div class="dish-price">48€</div>
+      </div>
+      <div class="dish-desc">Carnaroli mantecato, truffe noire du Périgord râpée à table, parmesan 36 mois, beurre clarifié.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag veggie">Végétarien</span><span class="tag prestige">Prestige</span></div>
+        <div class="allergens" style="font-size:11px;color:#5a8a5a;opacity:0.7;">✓ Sans allergène majeur</div>
+      </div>
+    </div>
+
+
+  <!-- ============ DESSERTS ============ -->
+  <div class="section" id="desserts">
+    <div class="section-title-block">
+      <div class="section-eyebrow">Pour finir en beauté</div>
+      <div class="section-heading">Desserts</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Soufflé Grand Marnier</div>
+        <div class="dish-price">22€</div>
+      </div>
+      <div class="dish-desc">Soufflé chaud à l'orange et Grand Marnier, crème anglaise vanille Bourbon, zestes confits.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag signature">Signature</span><span class="tag">À commander</span></div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Tarte Tatin Revisitée</div>
+        <div class="dish-price">18€</div>
+      </div>
+      <div class="dish-desc">Pommes caramélisées à la fleur de sel, pâte feuilletée pur beurre, glace vanille de Madagascar.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Tradition</span></div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Mille-Feuille Vanille</div>
+        <div class="dish-price">20€</div>
+      </div>
+      <div class="dish-desc">Feuilletage inversé caramélisé, crème diplomate vanille de Tahiti, coulis de framboise.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Maison</span></div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Baba au Rhum</div>
+        <div class="dish-price">19€</div>
+      </div>
+      <div class="dish-desc">Baba moelleux imbibé au rhum vieux, chantilly légère, fruits exotiques frais, caramel beurre salé.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Classique</span></div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Plateau de Fromages</div>
+        <div class="dish-price">24€</div>
+      </div>
+      <div class="dish-desc">Comté 36 mois, Époisses, Saint-Félicien, Roquefort Carles, pain aux noix.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag">Affiné</span><span class="tag">Terroir</span></div>
+        <div class="allergens"><span class="allergen">🌾</span></div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-top">
+        <div class="dish-name">Île Flottante Truffe</div>
+        <div class="dish-price">21€</div>
+      </div>
+      <div class="dish-desc">Blanc en neige légèrement caramélisé, crème anglaise à la truffe blanche, amandes effilées.</div>
+      <div class="dish-footer">
+        <div class="dish-tags"><span class="tag prestige">Prestige</span></div>
+        <div class="allergens" style="font-size:11px;color:#5a8a5a;opacity:0.7;">✓ Sans allergène majeur</div>
+      </div>
+    </div>
+
+
+  <!-- ============ VINS ============ -->
+  <div class="section" id="vins">
+    <div class="section-title-block">
+      <div class="section-eyebrow">Notre cave · 400 références</div>
+      <div class="section-heading">Carte des Vins</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="cave-intro">Notre cave compte plus de 400 références soigneusement sélectionnées par notre sommelier.</div>
+
+    <div class="vin-section-title">✦ &nbsp; Vins Blancs</div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Bourgogne · Blanc</div>
+      <div class="vin-name">Meursault Premier Cru</div>
+      <div class="vin-domaine">Domaine Leflaive · 2021</div>
+      <div class="vin-notes">Minéral et beurré, notes de noisette et de miel, finale longue et persistante.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">95€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">22€ / verre</span>
+      </div>
+    </div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Loire · Blanc</div>
+      <div class="vin-name">Sancerre Les Monts Damnés</div>
+      <div class="vin-domaine">Henri Bourgeois · 2022</div>
+      <div class="vin-notes">Sauvignon pur, vif et minéral, notes de pamplemousse et de silex.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">65€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">16€ / verre</span>
+      </div>
+    </div>
+
+    <div class="vin-section-title">✦ &nbsp; Vins Rouges</div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Bordeaux · Rouge</div>
+      <div class="vin-name">Saint-Émilion Grand Cru</div>
+      <div class="vin-domaine">Château Figeac · 2019</div>
+      <div class="vin-notes">Puissant et élégant, tanins soyeux, notes de cassis et épices douces.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">120€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">28€ / verre</span>
+      </div>
+    </div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Rhône · Rouge</div>
+      <div class="vin-name">Châteauneuf-du-Pape</div>
+      <div class="vin-domaine">Château Rayas · 2020</div>
+      <div class="vin-notes">Grenache pur, garrigue, fruits mûrs et épices. Référence de l'appellation.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">145€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">32€ / verre</span>
+      </div>
+    </div>
+
+    <div class="vin-section-title">✦ &nbsp; Champagnes</div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Champagne · Brut</div>
+      <div class="vin-name">Blanc de Blancs Grand Cru</div>
+      <div class="vin-domaine">Krug · NV</div>
+      <div class="vin-notes">Effervescence fine, fraîcheur d'agrumes, notes de brioche et de nougat.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">180€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">42€ / verre</span>
+      </div>
+    </div>
+
+    <div class="vin-card">
+      <div class="vin-appellation">Champagne · Rosé</div>
+      <div class="vin-name">Rosé Millésimé</div>
+      <div class="vin-domaine">Billecart-Salmon · 2018</div>
+      <div class="vin-notes">Fraise des bois, pêche blanche, bulles délicates. Le champagne de la romance.</div>
+      <div class="vin-price">
+        <span class="vin-price-item">145€ / bouteille</span>
+        <div class="vin-price-dot"></div>
+        <span class="vin-price-item">35€ / verre</span>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">✦ Légende des allergènes</div>
+      <div class="legend-grid">
+        <div class="legend-item"><span>🌾</span> Gluten</div>
+        <div class="legend-item"><span>🐟</span> Poisson</div>
+        <div class="legend-item"><span>🦐</span> Crustacés</div>
+        <div class="legend-item"><span>🦪</span> Mollusques</div>
+        <div class="legend-item"><span>🟡</span> Moutarde</div>
+        <div class="legend-item"><span>🌿</span> Céleri</div>
+        <div class="legend-item"><span>🌱</span> Aneth</div>
+        <div class="legend-item"><span>🌰</span> Sésame</div>
+      </div>
+      <div class="legend-note">Informez votre serveur de toute allergie ou intolérance. Notre cuisine s'adapte à vos besoins avec le même soin.</div>
+    </div>
+
+  </div>
+
+</div><!-- end phone-shell -->
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
